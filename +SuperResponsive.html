@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère Cipher</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin: 10px 0;
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    .vigenere-square {
+      display: none;
+    }
+
+    .btn-toggle {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Vigenère Cipher</h1>
+
+    <div class="form-group">
+      <label for="key">Enter Key:</label>
+      <input type="text" class="form-control" id="key" placeholder="Enter key">
+    </div>
+
+    <div class="form-group">
+      <label for="plaintext">Enter Text:</label>
+      <textarea class="form-control" id="plaintext" placeholder="Enter text"></textarea>
+    </div>
+
+    <button class="btn btn-primary" onclick="encrypt()">Encrypt</button>
+    <button class="btn btn-primary" onclick="decrypt()">Decrypt</button>
+
+    <h2>Result:</h2>
+    <p>Encrypted Text: <span id="encryptedText"></span></p>
+    <p>Decrypted Text: <span id="decryptedText"></span></p>
+
+    <h2>Vigenère Square:</h2>
+    <button class="btn btn-secondary btn-toggle" onclick="toggleVigenereSquare()">Toggle Vigenère Square</button>
+    <div class="vigenere-square">
+      <table id="vigenereTable"></table>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    function generateVigenereTable() {
+      const table = document.getElementById("vigenereTable");
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      for (let i = 0; i < 26; i++) {
+        const row = table.insertRow(i);
+        for (let j = 0; j < 26; j++) {
+          const cell = row.insertCell(j);
+          const charCode = (i + j) % 26;
+          cell.textContent = alphabet.charAt(charCode);
+        }
+      }
+    }
+
+    function encrypt() {
+      const key = document.getElementById("key").value.toUpperCase();
+      const plaintext = document.getElementById("plaintext").value.toUpperCase();
+      const encryptedText = [];
+
+      for (let i = 0; i < plaintext.length; i++) {
+        const charCode = plaintext.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) {
+          const keyIndex = i % key.length;
+          const shift = key.charCodeAt(keyIndex) - 65;
+          const encryptedCharCode = (charCode + shift) % 26 + 65;
+          encryptedText.push(String.fromCharCode(encryptedCharCode));
+        } else {
+          encryptedText.push(plaintext.charAt(i));
+        }
+      }
+
+      document.getElementById("encryptedText").textContent = encryptedText.join("");
+      generateVigenereTable();
+      showVigenereSquare();
+    }
+
+    function decrypt() {
+      const key = document.getElementById("key").value.toUpperCase();
+      const ciphertext = document.getElementById("encryptedText").textContent.toUpperCase();
+      const decryptedText = [];
+
+      for (let i = 0; i < ciphertext.length; i++) {
+        const charCode = ciphertext.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) {
+          const keyIndex = i % key.length;
+          const shift = key.charCodeAt(keyIndex) - 65;
+          const decryptedCharCode = (charCode - shift + 26) % 26 + 65;
+          decryptedText.push(String.fromCharCode(decryptedCharCode));
+        } else {
+          decryptedText.push(ciphertext.charAt(i));
+        }
+      }
+
+      document.getElementById("decryptedText").textContent = decryptedText.join("");
+      generateVigenereTable();
+      showVigenereSquare();
+    }
+
+    function toggleVigenereSquare() {
+      const vigenereSquare = document.querySelector(".vigenere-square");
+      vigenereSquare.style.display = vigenereSquare.style.display === "none" ? "block" : "none";
+    }
+
+    function showVigenereSquare() {
+      const vigenereSquare = document.querySelector(".vigenere-square");
+      vigenereSquare.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vigenère Cipher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin: 10px 0;
+    }
+
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Vigenère Cipher</h1>
+
+  <label for="key">Enter Key:</label>
+  <input type="text" id="key" placeholder="Enter key">
+
+  <label for="plaintext">Enter Text:</label>
+  <textarea id="plaintext" placeholder="Enter text"></textarea>
+
+  <button onclick="encrypt()">Encrypt</button>
+  <button onclick="decrypt()">Decrypt</button>
+
+  <h2>Result:</h2>
+  <p>Encrypted Text: <span id="encryptedText"></span></p>
+  <p>Decrypted Text: <span id="decryptedText"></span></p>
+
+  <h2>Vigenère Square:</h2>
+  <table id="vigenereTable"></table>
+
+  <script>
+    function generateVigenereTable() {
+      const table = document.getElementById("vigenereTable");
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      for (let i = 0; i < 26; i++) {
+        const row = table.insertRow(i);
+        for (let j = 0; j < 26; j++) {
+          const cell = row.insertCell(j);
+          const charCode = (i + j) % 26;
+          cell.textContent = alphabet.charAt(charCode);
+        }
+      }
+    }
+
+    function encrypt() {
+      const key = document.getElementById("key").value.toUpperCase();
+      const plaintext = document.getElementById("plaintext").value.toUpperCase();
+      const encryptedText = [];
+
+      for (let i = 0; i < plaintext.length; i++) {
+        const charCode = plaintext.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) {
+          const keyIndex = i % key.length;
+          const shift = key.charCodeAt(keyIndex) - 65;
+          const encryptedCharCode = (charCode + shift) % 26 + 65;
+          encryptedText.push(String.fromCharCode(encryptedCharCode));
+        } else {
+          encryptedText.push(plaintext.charAt(i));
+        }
+      }
+
+      document.getElementById("encryptedText").textContent = encryptedText.join("");
+      generateVigenereTable();
+    }
+
+    function decrypt() {
+      const key = document.getElementById("key").value.toUpperCase();
+      const ciphertext = document.getElementById("encryptedText").textContent.toUpperCase();
+      const decryptedText = [];
+
+      for (let i = 0; i < ciphertext.length; i++) {
+        const charCode = ciphertext.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) {
+          const keyIndex = i % key.length;
+          const shift = key.charCodeAt(keyIndex) - 65;
+          const decryptedCharCode = (charCode - shift + 26) % 26 + 65;
+          decryptedText.push(String.fromCharCode(decryptedCharCode));
+        } else {
+          decryptedText.push(ciphertext.charAt(i));
+        }
+      }
+
+      document.getElementById("decryptedText").textContent = decryptedText.join("");
+      generateVigenereTable();
+    }
+  </script>
+
+</body>
+</html>
